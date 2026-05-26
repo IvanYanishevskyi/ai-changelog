@@ -27,7 +27,7 @@ celery.conf.update(
 )
 
 
-@celery.task(name="changelog.process_push")  # type: ignore[misc]
+@celery.task(name="changelog.process_push")  # type: ignore[untyped-decorator]
 def process_push(repo_full_name: str, ref: str, commits: list[dict[str, Any]]) -> dict[str, Any]:
     logger.info("Processing push for %s ref=%s commits=%d", repo_full_name, ref, len(commits))
     return {"status": "processed", "repo": repo_full_name, "commit_count": len(commits)}
