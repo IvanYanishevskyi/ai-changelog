@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import hashlib
 import hmac
 import logging
+from typing import Any
 
 from fastapi import APIRouter, Header, HTTPException, Request
 
@@ -24,13 +27,13 @@ async def github_webhook(
     request: Request,
     x_hub_signature_256: str = Header(default=""),
     x_github_event: str = Header(default=""),
-):
+) -> dict[str, Any]:
     payload = await request.body()
 
     if not verify_signature(payload, x_hub_signature_256):
         raise HTTPException(status_code=403, detail="Invalid signature")
 
-    event_data = await request.json()
+    event_data: dict[str, Any] = await request.json()
     logger.info("Received GitHub event: %s", x_github_event)
 
     if x_github_event == "push":

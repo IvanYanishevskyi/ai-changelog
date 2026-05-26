@@ -1,6 +1,9 @@
-import logging
+from __future__ import annotations
 
-from celery import Celery
+import logging
+from typing import Any
+
+from celery import Celery  # type: ignore[import-untyped]
 
 from changelog.config import settings
 
@@ -24,7 +27,7 @@ celery.conf.update(
 )
 
 
-@celery.task(name="changelog.process_push")
-def process_push(repo_full_name: str, ref: str, commits: list[dict]) -> dict:
+@celery.task(name="changelog.process_push")  # type: ignore[misc]
+def process_push(repo_full_name: str, ref: str, commits: list[dict[str, Any]]) -> dict[str, Any]:
     logger.info("Processing push for %s ref=%s commits=%d", repo_full_name, ref, len(commits))
     return {"status": "processed", "repo": repo_full_name, "commit_count": len(commits)}
