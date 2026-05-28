@@ -8,7 +8,6 @@ from typing import Any
 from fastapi import APIRouter, BackgroundTasks, Header, HTTPException, Request
 
 from changelog.config import settings
-from changelog.workers.background import process_push
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/webhooks", tags=["webhooks"])
@@ -39,6 +38,8 @@ async def github_webhook(
     logger.info("Received GitHub event: %s", x_github_event)
 
     if x_github_event == "push":
+        from changelog.workers.background import process_push
+
         repo = event_data.get("repository", {}).get("full_name", "unknown")
         ref = event_data.get("ref", "")
         commits = event_data.get("commits", [])
