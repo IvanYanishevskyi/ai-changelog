@@ -6,6 +6,7 @@ from sentry_sdk.integrations.starlette import StarletteIntegration
 from changelog import __version__
 from changelog.auth import router as auth_router
 from changelog.config import settings
+from changelog.dashboard import router as dashboard_router
 from changelog.db import engine
 from changelog.db.base import Base
 from changelog.health import router as health_router
@@ -25,6 +26,7 @@ app.add_middleware(RateLimitMiddleware)
 app.include_router(health_router)
 app.include_router(github_router)
 app.include_router(auth_router)
+app.include_router(dashboard_router)
 
 
 @app.on_event("startup")

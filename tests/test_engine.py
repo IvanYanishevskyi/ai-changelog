@@ -2,24 +2,23 @@ from __future__ import annotations
 
 import pytest
 import pytest_httpx
-from httpx import Response
 
 from changelog.llm.formatter import format_changelog, group_by_type
 from changelog.llm.provider import OpenRouterProvider
+
+FEAT_CONTENT = '{"type":"feat","summary":"add user login endpoint","is_breaking_change":false}'
+FIX_CONTENT = (
+    '{"type":"fix","summary":"fix null pointer in parser","is_breaking_change":false}'
+)
+BREAKING_CONTENT = (
+    '{"type":"breaking","summary":"remove deprecated v1 API","is_breaking_change":true}'
+)
 
 
 @pytest.mark.asyncio
 async def test_classify_commit_calls_api(httpx_mock: pytest_httpx.HTXTMock) -> None:
     provider = OpenRouterProvider(api_key="test-key", model="openai/gpt-4o-mini")
-    httpx_mock.add_response(
-        json={
-            "choices": [{
-                "message": {
-                    "content": '{"type": "feat", "summary": "add user login endpoint", "is_breaking_change": false}'
-                }
-            }]
-        }
-    )
+    httpx_mock.add_response(json={"choices": [{"message": {"content": FEAT_CONTENT}}]})
     result = await provider.classify_commit("feat: add user login endpoint")
     assert result["type"] == "feat"
     assert result["summary"] == "add user login endpoint"
@@ -27,13 +26,15 @@ async def test_classify_commit_calls_api(httpx_mock: pytest_httpx.HTXTMock) -> N
 
 
 @pytest.mark.asyncio
-async def test_classify_commit_strips_json_fence(httpx_mock: pytest_httpx.HTXTMock) -> None:
+async def test_classify_commit_strips_json_fence(
+    httpx_mock: pytest_httpx.HTXTMock,
+) -> None:
     provider = OpenRouterProvider(api_key="test-key", model="openai/gpt-4o-mini")
     httpx_mock.add_response(
         json={
             "choices": [{
                 "message": {
-                    "content": "```json\n{\"type\": \"fix\", \"summary\": \"fix null pointer in parser\", \"is_breaking_change\": false}\n```"
+                    "content": f"```json\n{FIX_CONTENT}\n```"
                 }
             }]
         }
@@ -47,13 +48,7 @@ async def test_classify_commit_strips_json_fence(httpx_mock: pytest_httpx.HTXTMo
 async def test_classify_commit_breaking(httpx_mock: pytest_httpx.HTXTMock) -> None:
     provider = OpenRouterProvider(api_key="test-key")
     httpx_mock.add_response(
-        json={
-            "choices": [{
-                "message": {
-                    "content": '{"type": "breaking", "summary": "remove deprecated v1 API", "is_breaking_change": true}'
-                }
-            }]
-        }
+        json={"choices": [{"message": {"content": BREAKING_CONTENT}}]}
     )
     result = await provider.classify_commit("feat!: remove deprecated v1 API")
     assert result["type"] == "breaking"
