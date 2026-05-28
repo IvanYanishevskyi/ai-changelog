@@ -67,14 +67,4 @@ tests/             - pytest test suite
 
 ## Deployment
 
-Push to `main` triggers GitHub Actions: lint + typecheck + test, then auto-deploy to Fly.io staging.
-
-```bash
-flyctl deploy
-```
-
-## Secrets (Fly.io)
-
-```bash
-flyctl secrets set OPENAI_API_KEY=... GITHUB_WEBHOOK_SECRET=... SENTRY_DSN=...
-```
+Push to `main` triggers GitHub Actions: lint + typecheck + test. Deploy backend hosting TBD — awaiting Board decision.
