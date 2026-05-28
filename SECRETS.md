@@ -5,6 +5,9 @@
 | `GITHUB_APP_ID` | GitHub App settings page | Pending — create App |
 | `GITHUB_APP_PRIVATE_KEY` | Downloaded from GitHub App settings | Pending — create App |
 | `GITHUB_WEBHOOK_SECRET` | Generated locally | **Ready** — set as Render env var |
+| `GITHUB_OAUTH_CLIENT_ID` | GitHub OAuth App settings | Pending — create OAuth App |
+| `GITHUB_OAUTH_CLIENT_SECRET` | GitHub OAuth App settings | Pending — create OAuth App |
+| `JWT_SECRET` | Generated locally | **Ready** — set as Render env var |
 | `OPENROUTER_API_KEY` | Board provided | **Ready** — set as Render env var |
 | `SENTRY_DSN` | Sentry project settings | Optional for MVP |
 | `DATABASE_URL` | Neon PostgreSQL dashboard | Pending — create Neon project |
