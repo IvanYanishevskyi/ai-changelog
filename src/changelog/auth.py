@@ -15,6 +15,8 @@ from changelog.config import settings
 from changelog.db import get_db
 from changelog.db.models import User
 
+DASHBOARD_URL = "https://gitlog.space/dashboard"
+
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -83,7 +85,7 @@ async def login() -> RedirectResponse:
 
 @router.get("/github/callback")
 async def github_callback(
-    code: str, request: Request, db: Session = Depends(get_db)
+    code: str, db: Session = Depends(get_db)
 ) -> RedirectResponse:
     if not settings.github_oauth_client_id or not settings.github_oauth_client_secret:
         raise HTTPException(status_code=503, detail="GitHub OAuth not configured")
@@ -103,7 +105,7 @@ async def github_callback(
         access_token = token_data.get("access_token")
         if not access_token:
             logger.error("OAuth token exchange failed: %s", token_data)
-            return RedirectResponse(url=f"{request.base_url}dashboard?error=auth_failed")
+            return RedirectResponse(url=f"{DASHBOARD_URL}?error=auth_failed")
 
         headers = {
             "Authorization": f"Bearer {access_token}",
@@ -136,7 +138,7 @@ async def github_callback(
     db.refresh(user)
 
     token = create_jwt(user.id)
-    redirect = RedirectResponse(url=f"{request.base_url}dashboard")
+    redirect = RedirectResponse(url=f"{DASHBOARD_URL}#access_token={token}")
     max_age = settings.jwt_expire_minutes * 60
     redirect.set_cookie(
         key="access_token", value=token, httponly=True,

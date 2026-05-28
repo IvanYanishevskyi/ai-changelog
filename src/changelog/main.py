@@ -1,5 +1,6 @@
 import sentry_sdk
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from sentry_sdk.integrations.fastapi import FastApiIntegration
 from sentry_sdk.integrations.starlette import StarletteIntegration
 
@@ -21,7 +22,19 @@ if settings.sentry_dsn:
         integrations=[StarletteIntegration(), FastApiIntegration()],
     )
 
+origins = [
+    "https://gitlog.space",
+    "https://www.gitlog.space",
+]
+
 app = FastAPI(title=settings.app_name, version=__version__)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.add_middleware(RateLimitMiddleware)
 app.include_router(health_router)
 app.include_router(github_router)
