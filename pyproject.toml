@@ -18,6 +18,9 @@ dependencies = [
     "sentry-sdk[fastapi]>=2.5.0",
     "hvac>=2.2.0",
     "cryptography>=42.0.0",
+    "sqlalchemy>=2.0.0",
+    "alembic>=1.13.0",
+    "psycopg2-binary>=2.9.0",
 ]
 
 [project.optional-dependencies]

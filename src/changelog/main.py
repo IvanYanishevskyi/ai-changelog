@@ -5,6 +5,8 @@ from sentry_sdk.integrations.starlette import StarletteIntegration
 
 from changelog import __version__
 from changelog.config import settings
+from changelog.db import engine
+from changelog.db.base import Base
 from changelog.health import router as health_router
 from changelog.webhooks.github import router as github_router
 
@@ -19,3 +21,8 @@ if settings.sentry_dsn:
 app = FastAPI(title=settings.app_name, version=__version__)
 app.include_router(health_router)
 app.include_router(github_router)
+
+
+@app.on_event("startup")
+async def startup() -> None:
+    Base.metadata.create_all(bind=engine)
