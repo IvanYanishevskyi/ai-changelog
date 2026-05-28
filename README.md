@@ -7,8 +7,8 @@ AI-powered changelog generator: parses git commits, classifies via LLM, outputs 
 - **API**: FastAPI + Uvicorn
 - **Database**: PostgreSQL + SQLAlchemy + Alembic
 - **Task Queue**: Celery + Redis
-- **LLM**: Dual provider (OpenAI / local)
-- **Hosting**: Fly.io
+- **LLM**: OpenRouter (Claude, GPT-4, Gemini) via single API key
+- **Hosting**: Render free tier (first 10 customers, see Board decision)
 - **CI/CD**: GitHub Actions
 
 ## Quick Start
@@ -67,4 +67,4 @@ tests/             - pytest test suite
 
 ## Deployment
 
-Push to `main` triggers GitHub Actions: lint + typecheck + test. Deploy backend hosting TBD — awaiting Board decision.
+Push to `main` triggers GitHub Actions: lint + typecheck + test. Backend deploys to Render free tier — see HOSTING-COST-ANALYSIS.md for updated plan.

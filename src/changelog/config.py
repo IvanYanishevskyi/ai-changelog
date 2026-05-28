@@ -6,17 +6,15 @@ class Settings(BaseSettings):
     debug: bool = False
 
     database_url: str = "postgresql://postgres:postgres@localhost:5432/changelog"
-    redis_url: str = "redis://localhost:6379/0"
-    celery_broker_url: str = "redis://localhost:6379/1"
-    celery_result_backend: str = "redis://localhost:6379/2"
 
     github_app_id: str = ""
     github_app_private_key: str = ""
     github_webhook_secret: str = ""
 
-    openai_api_key: str = ""
-    llm_provider: str = "openai"
-    llm_model: str = "gpt-4o-mini"
+    openrouter_api_key: str = ""
+    openrouter_base_url: str = "https://openrouter.ai/api/v1"
+    llm_provider: str = "openrouter"
+    llm_model: str = "openai/gpt-4o-mini"
 
     sentry_dsn: str = ""
 

@@ -10,6 +10,7 @@ def test_health():
     assert resp.status_code == 200
     data = resp.json()
     assert data["status"] == "ok"
+    assert "database" in data
 
 
 def test_readiness():

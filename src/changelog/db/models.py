@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from enum import Enum as PyEnum
-from typing import Optional
+from enum import StrEnum
 
 from sqlalchemy import DateTime, Enum, ForeignKey, Integer, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -10,13 +9,13 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from changelog.db.base import Base
 
 
-class ChangelogFormat(str, PyEnum):
+class ChangelogFormat(StrEnum):
     KEEP_A_CHANGELOG = "keep_a_changelog"
     CONVENTIONAL_COMMITS = "conventional_commits"
     CUSTOM = "custom"
 
 
-class AudienceMode(str, PyEnum):
+class AudienceMode(StrEnum):
     DEVELOPER = "developer"
     END_USER = "end_user"
     BOTH = "both"
@@ -73,12 +72,12 @@ class Changelog(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     version: Mapped[str] = mapped_column(String(100), index=True)
-    tag: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    tag: Mapped[str | None] = mapped_column(String(255), nullable=True)
     format: Mapped[ChangelogFormat] = mapped_column(Enum(ChangelogFormat))
     audience: Mapped[AudienceMode] = mapped_column(Enum(AudienceMode))
     content: Mapped[str] = mapped_column(Text)
     commit_count: Mapped[int] = mapped_column(Integer, default=0)
-    pr_number: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    pr_number: Mapped[int | None] = mapped_column(Integer, nullable=True)
     status: Mapped[str] = mapped_column(String(50), default="generated")
     repository_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("repositories.id"), index=True
