@@ -102,3 +102,18 @@ class Changelog(Base):
     generated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
     repository: Mapped[Repository] = relationship(back_populates="changelogs")
+
+
+class WebhookDelivery(Base):
+    __tablename__ = "webhook_deliveries"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    event_type: Mapped[str] = mapped_column(String(100), index=True)
+    action: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    installation_id: Mapped[int | None] = mapped_column(Integer, nullable=True, index=True)
+    repo_full_name: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    status: Mapped[str] = mapped_column(String(50), default="received")
+    error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    retry_count: Mapped[int] = mapped_column(Integer, default=0)
+    received_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    processed_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)

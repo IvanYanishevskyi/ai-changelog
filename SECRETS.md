@@ -2,29 +2,36 @@
 
 | Secret | Source | Status |
 |--------|--------|--------|
-| `GITHUB_APP_ID` | GitHub App settings page | Pending — create App |
-| `GITHUB_APP_PRIVATE_KEY` | Downloaded from GitHub App settings | Pending — create App |
-| `GITHUB_WEBHOOK_SECRET` | Generated locally | **Ready** — set as Render env var |
-| `GITHUB_OAUTH_CLIENT_ID` | GitHub OAuth App settings | Pending — create OAuth App |
-| `GITHUB_OAUTH_CLIENT_SECRET` | GitHub OAuth App settings | Pending — create OAuth App |
+| `GITHUB_APP_ID` | Board delivered | **DEPLOYED** — `3905523` |
+| `GITHUB_APP_PRIVATE_KEY` | Board delivered | **DEPLOYED** — from `.pem` file |
+| `GITHUB_WEBHOOK_SECRET` | Board delivered | **DEPLOYED** — `a8be30985431b93619f2bb489011d9c808e03c4d91ca114ee48ab8f33559b954` |
+| `GITHUB_CLIENT_ID` | Board delivered | **DEPLOYED** — `Iv23liDhRCwkn09QRlqW` |
+| `GITHUB_OAUTH_CLIENT_SECRET` | Existing OAuth App | **Still required** — set as Render env var |
 | `JWT_SECRET` | Generated locally | **Ready** — set as Render env var |
 | `OPENROUTER_API_KEY` | Board provided | **Ready** — set as Render env var |
 | `SENTRY_DSN` | Sentry project settings | Optional for MVP |
-| `DATABASE_URL` | Neon PostgreSQL dashboard | Pending — create Neon project |
+| `DATABASE_URL` | Neon PostgreSQL | **LIVE** — Render-managed |
 
-## GitHub App Creation Checklist
+## GitHub App Configuration (Post-Deploy)
 
-1. Go to https://github.com/settings/apps
-2. Name: `AI Changelog Generator`
-3. Homepage URL: `https://github.com/TechVenture-Inc/ai-changelog`
-4. Webhook URL: `https://<BACKEND-URL>/webhooks/github` (set after backend hosting is decided)
-5. Webhook Secret: `0b38e7ae7f864a1ab3ade63e9fdaada7803c0ee62c823f4cfa4b30868c6d16c9` (set as Render env var `GITHUB_WEBHOOK_SECRET`)
-6. Permissions:
-   - **Repository permissions:**
-     - Contents: Read-only
-     - Metadata: Read-only
-     - Pull requests: Read & Write
-   - **Organization permissions:** None
-7. Events: `push`, `release`, `installation`
-8. Generate private key → download `.pem` file
-9. Note the **App ID** from the settings page
+App: **Gitlog AI** | ID: `3905523`
+
+After deploying credentials, configure at https://github.com/settings/apps/gitlog-ai:
+
+| Setting | Value |
+|---------|-------|
+| **Webhook URL** | `https://gitlog.space/webhooks/github` |
+| **Webhook Secret** | `a8be30985431b93619f2bb489011d9c808e03c4d91ca114ee48ab8f33559b954` |
+| **Callback URL** | `https://gitlog.space/auth/github/callback` |
+| **Homepage URL** | `https://gitlog.space` |
+
+**Permissions:**
+- Repository permissions:
+  - Contents: Read-only
+  - Metadata: Read-only
+  - Pull requests: Read & Write
+- Organization permissions: None
+
+**Subscribe to events:** `push`, `release`, `installation`, `installation_repositories`
+
+**Note:** Private key file is `gitlog-ai-ai-changelog-generator.2026-05-29.private-key.pem` in project root.

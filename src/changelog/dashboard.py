@@ -19,6 +19,7 @@ from changelog.db.models import (
     Repository,
     User,
 )
+from changelog.github.app import get_installation_repos, get_installation_token
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api", tags=["dashboard"])
@@ -286,3 +287,39 @@ def install_callback(
         "installation_id": installation_id,
         "setup_action": setup_action,
     }
+
+
+@router.get("/installations/{installation_id}/status")
+async def installation_status(
+    installation_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> dict[str, Any]:
+    install = db.query(Installation).filter(
+        Installation.github_installation_id == installation_id
+    ).first()
+    if not install:
+        raise HTTPException(status_code=404, detail="Installation not found")
+    try:
+        token = await get_installation_token(installation_id)
+        repos = await get_installation_repos(installation_id)
+        return {
+            "id": install.id,
+            "github_installation_id": install.github_installation_id,
+            "account_login": install.account_login,
+            "installed_at": install.installed_at.isoformat(),
+            "token_obtained": bool(token),
+            "repo_count": len(repos),
+            "repositories": [
+                {
+                    "id": r["id"],
+                    "full_name": r["full_name"],
+                    "private": r["private"],
+                    "default_branch": r.get("default_branch", "main"),
+                }
+                for r in repos
+            ],
+        }
+    except Exception as e:
+        logger.error("Status check failed for installation %d: %s", installation_id, e)
+        raise HTTPException(status_code=502, detail=f"GitHub API error: {e}")

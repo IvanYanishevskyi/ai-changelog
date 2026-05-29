@@ -13,7 +13,10 @@ class Settings(BaseSettings):
 
     github_oauth_client_id: str = ""
     github_oauth_client_secret: str = ""
-    github_oauth_redirect_uri: str = "https://ai-changelog-sc7o.onrender.com/auth/github/callback"
+    github_oauth_redirect_uri: str = "https://gitlog.space/auth/github/callback"
+
+    # GitHub App also exposes an OAuth client_id (aliases github_oauth_client_id)
+    github_client_id: str = ""
 
     jwt_secret: str = ""
     jwt_algorithm: str = "HS256"

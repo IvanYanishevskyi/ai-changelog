@@ -15,7 +15,8 @@ from changelog.config import settings
 from changelog.db import get_db
 from changelog.db.models import User
 
-DASHBOARD_URL = "https://gitlog.space/dashboard"
+# Use trailing slash because Vercel/ Astro route resolves at /dashboard/
+DASHBOARD_URL = "https://gitlog.space/dashboard/"
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -72,11 +73,12 @@ async def get_current_user(
 
 @router.get("/login")
 async def login() -> RedirectResponse:
-    if not settings.github_oauth_client_id:
+    client_id = settings.github_client_id or settings.github_oauth_client_id
+    if not client_id:
         raise HTTPException(status_code=503, detail="GitHub OAuth not configured")
     url = (
         "https://github.com/login/oauth/authorize"
-        f"?client_id={settings.github_oauth_client_id}"
+        f"?client_id={client_id}"
         f"&redirect_uri={settings.github_oauth_redirect_uri}"
         "&scope=read:user+user:email"
     )
@@ -87,14 +89,15 @@ async def login() -> RedirectResponse:
 async def github_callback(
     code: str, db: Session = Depends(get_db)
 ) -> RedirectResponse:
-    if not settings.github_oauth_client_id or not settings.github_oauth_client_secret:
+    client_id = settings.github_client_id or settings.github_oauth_client_id
+    if not client_id or not settings.github_oauth_client_secret:
         raise HTTPException(status_code=503, detail="GitHub OAuth not configured")
 
     async with httpx.AsyncClient() as client:
         token_resp = await client.post(
             "https://github.com/login/oauth/access_token",
             data={
-                "client_id": settings.github_oauth_client_id,
+                "client_id": client_id,
                 "client_secret": settings.github_oauth_client_secret,
                 "code": code,
                 "redirect_uri": settings.github_oauth_redirect_uri,
