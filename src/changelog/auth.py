@@ -73,7 +73,7 @@ async def get_current_user(
 
 @router.get("/login")
 async def login() -> RedirectResponse:
-    client_id = settings.github_client_id or settings.github_oauth_client_id
+    client_id = settings.github_oauth_client_id or settings.github_client_id
     if not client_id:
         raise HTTPException(status_code=503, detail="GitHub OAuth not configured")
     url = (
@@ -89,7 +89,7 @@ async def login() -> RedirectResponse:
 async def github_callback(
     code: str, db: Session = Depends(get_db)
 ) -> RedirectResponse:
-    client_id = settings.github_client_id or settings.github_oauth_client_id
+    client_id = settings.github_oauth_client_id or settings.github_client_id
     if not client_id or not settings.github_oauth_client_secret:
         raise HTTPException(status_code=503, detail="GitHub OAuth not configured")
 
